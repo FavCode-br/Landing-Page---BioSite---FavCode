@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FavCode — Testou. Funcionou. Favoritou.</title>
+  <meta name="description" content="FavCode: Radar de temas em alta em IA e tecnologia, conteúdo prático no Instagram e contato oficial pelo WhatsApp." />
+  <meta name="theme-color" content="#f4f7ff" id="metaThemeColor" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="FavCode" />
+  <meta property="og:title" content="FavCode — Testou. Funcionou. Favoritou." />
+  <meta property="og:description" content="Radar de temas em alta, conteúdo prático no Instagram e contato oficial pelo WhatsApp." />
+  <meta property="og:image" content="./assets/icons/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Logo da FavCode" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icons/icon-512.png" />
+  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
+
+  <script>
+    // Aplica o tema antes da primeira pintura para evitar o flash do tema claro.
+    (function(){
+      var d = document.documentElement, t = null;
+      d.classList.add('js');
+      try { t = localStorage.getItem('favcode-theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') {
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      d.setAttribute('data-theme', t);
+      var m = document.getElementById('metaThemeColor');
+      if (m) m.setAttribute('content', t === 'dark' ? '#0a1022' : '#f4f7ff');
+    })();
+  </script>
+
+  <style>
+    :root{
+      --bg:#f4f7ff;
+      --bg-soft:#edf3ff;
+      --card:rgba(255,255,255,.95);
+      --card-2:#f7f9ff;
+      --text:#10152d;
+      --title:#0e1530;
+      --muted:#66728f;
+      --line:#dfe6f4;
+      --blue:#1768ff;
+      --cyan:#08c9e8;
+      --shadow:0 22px 60px rgba(17,29,77,.10);
+      --hero-grad:linear-gradient(180deg,#eef4ff 0%,#f9fbff 35%,#f4f7ff 100%);
+      --image-shadow:0 28px 60px rgba(21,38,99,.14);
+      --success:#29c98b;
+    }
+
+    html[data-theme="dark"]{
+      --bg:#0a1022;
+      --bg-soft:#111932;
+      --card:rgba(15,23,46,.94);
+      --card-2:#0f1937;
+      --text:#eef3ff;
+      --title:#ffffff;
+      --muted:#a8b4d1;
+      --line:#223157;
+      --blue:#4a88ff;
+      --cyan:#39d9f3;
+      --shadow:0 24px 64px rgba(0,0,0,.34);
+      --hero-grad:linear-gradient(180deg,#0d1430 0%,#0a1022 40%,#0a1022 100%);
+      --image-shadow:0 26px 60px rgba(0,0,0,.35);
+      --success:#44e5a4;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:24px;background:var(--bg)}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--hero-grad);
+      color:var(--text);
+      overflow-x:hidden;
+      transition:background .3s ease,color .3s ease;
+    }
+    a{text-decoration:none;color:inherit}
+    button,input{font:inherit}
+    img{max-width:100%;height:auto;display:block}
+    a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:12px}
+
+    .page-glow:before,.page-glow:after{content:"";position:fixed;pointer-events:none;z-index:-1;filter:blur(40px);opacity:.65}
+    .page-glow:before{width:340px;height:340px;left:-90px;top:120px;background:radial-gradient(circle,rgba(23,104,255,.17),transparent 70%)}
+    .page-glow:after{width:320px;height:320px;right:-80px;top:0;background:radial-gradient(circle,rgba(8,201,232,.14),transparent 72%)}
+
+    .progress-wrap{position:fixed;top:0;left:0;right:0;height:4px;background:transparent;z-index:60}
+    .progress{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 18px rgba(23,104,255,.45)}
+
+    .wrap{width:min(1120px,calc(100% - 28px));margin:auto;padding:22px 0 80px}
+    .shell{display:grid;gap:18px}
+
+    .hero,.section{
+      background:var(--card);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      transition:background .3s ease,border-color .3s ease,color .3s ease,transform .25s ease,box-shadow .25s ease;
+    }
+
+    .hero{
+      border-radius:40px;
+      overflow:hidden;
+      position:relative;
+      padding:24px;
+      display:grid;
+      gap:8px;
+      isolation:isolate;
+    }
+    .hero:before{content:"";position:absolute;width:430px;height:430px;right:-110px;top:-150px;background:radial-gradient(circle,rgba(23,104,255,.22),transparent 65%);z-index:-1}
+    .hero:after{content:"";position:absolute;width:260px;height:260px;left:-90px;bottom:-120px;background:radial-gradient(circle,rgba(8,201,232,.16),transparent 68%);z-index:-1}
+
+    .topbar{display:flex;align-items:center;justify-content:flex-end;position:relative;z-index:2}
+    .theme-toggle{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.55);padding:7px;cursor:pointer;backdrop-filter:blur(10px)}
+    html[data-theme="dark"] .theme-toggle{background:rgba(255,255,255,.04)}
+    .theme-toggle .toggle-track{width:38px;height:22px;border-radius:999px;background:var(--bg-soft);border:1px solid var(--line);position:relative;display:block}
+    .theme-toggle .toggle-track:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));transition:transform .28s ease;box-shadow:0 6px 12px rgba(23,104,255,.28)}
+    html[data-theme="dark"] .theme-toggle .toggle-track:after{transform:translateX(16px)}
+
+    .hero-copy{display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:center;padding:0 0 8px}
+    .kicker{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+    .kicker i{width:36px;height:1px;background:linear-gradient(90deg,var(--blue),transparent);display:block}
+    h1{font-size:clamp(40px,6.4vw,68px);line-height:.95;letter-spacing:-.06em;margin:18px 0 18px;color:var(--title)}
+    .grad{background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:17px;line-height:1.72;color:var(--muted);max-width:600px;margin:0}
+    .hero-actions,.section-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+    .section-actions{margin-top:6px}
+
+    /* Logo exibida inteira, na proporção original, sobre o próprio fundo branco do arquivo */
+    .brand-plate{justify-self:center;width:100%;max-width:340px;background:#fff;border:1px solid var(--line);border-radius:32px;padding:clamp(14px,2.4vw,24px);box-shadow:var(--image-shadow)}
+    .brand-plate img{width:100%;height:auto}
+
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:15px;border:1px solid transparent;font-size:14px;font-weight:800;transition:transform .2s ease,box-shadow .22s ease,background .22s ease,border-color .22s ease}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:#0f1838;color:#fff;box-shadow:0 12px 28px rgba(15,24,56,.16)}
+    .btn-secondary{background:var(--card);color:var(--text);border-color:var(--line)}
+    .btn-accent{background:linear-gradient(90deg,var(--blue),var(--cyan));color:#fff;box-shadow:0 16px 32px rgba(23,104,255,.22)}
+    html[data-theme="dark"] .btn-primary{background:#eef3ff;color:#0a1022;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+    html[data-theme="dark"] .btn-secondary{background:var(--bg-soft)}
+    html[data-theme="dark"] .btn-accent{color:#06102a}
+
+    .section{border-radius:34px;padding:24px;position:relative;overflow:hidden;scroll-margin-top:20px}
+    .section--primary{background:linear-gradient(145deg,rgba(23,104,255,.09),rgba(8,201,232,.09)),var(--card);padding:30px}
+    .section--feature{background:linear-gradient(145deg,rgba(8,201,232,.05),rgba(23,104,255,.05)),var(--card)}
+    .section--primary h2{font-size:clamp(32px,4vw,42px)}
+    html.js .section.reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s cubic-bezier(.2,.75,.2,1)}
+    html.js .section.reveal.in{opacity:1;transform:none}
+    .flow-label{display:flex;align-items:center;gap:10px;margin-bottom:15px;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .flow-label .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(23,104,255,.08);color:var(--blue);border:1px solid var(--line)}
+    .flow-label .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+    .soon{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+    .eyebrow{font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+    .section h2{font-size:30px;line-height:1.03;letter-spacing:-.05em;margin:0;color:var(--title)}
+    .sub{margin:0;color:var(--muted);font-size:14px;max-width:760px;line-height:1.7}
+    .copy-stack .sub{margin-top:12px}
+    .section-image{border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--image-shadow)}
+    .section-image img{width:100%;aspect-ratio:4/3;object-fit:cover}
+    .split{display:grid;grid-template-columns:.98fr 1.02fr;gap:18px;align-items:center}
+    .split.reverse{grid-template-columns:1.02fr .98fr}
+    .copy-stack{display:grid;gap:16px}
+    .meta-row{display:flex;flex-wrap:wrap;gap:8px}
+    .meta-chip{padding:9px 11px;border-radius:999px;border:1px solid var(--line);font-size:11px;font-weight:800;background:rgba(255,255,255,.5);color:var(--text)}
+    html[data-theme="dark"] .meta-chip{background:rgba(255,255,255,.04)}
+
+    .footer{padding:20px 6px 0;text-align:center;color:var(--muted);font-size:12px;line-height:1.7}
+    .footer strong{color:var(--title)}
+
+    .rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:9px;align-items:center}
+    .rail a{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb, var(--muted) 30%, transparent);border:1px solid color-mix(in srgb, var(--muted) 20%, transparent);position:relative;transition:.2s}
+    .rail a span{position:absolute;right:18px;top:50%;transform:translateY(-50%);white-space:nowrap;background:var(--card);border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:10px;font-weight:800;color:var(--text);opacity:0;pointer-events:none;transition:.2s}
+    .rail a:hover span,.rail a:focus-visible span,.rail a.active span{opacity:1}
+    .rail a.active{background:var(--blue);border-color:var(--blue);transform:scale(1.25)}
+
+    @media (max-width: 1080px){
+      .wrap{width:min(960px,calc(100% - 24px))}
+      .split,.split.reverse{grid-template-columns:1fr}
+      .rail{display:none}
+    }
+    @media (max-width: 720px){
+      .wrap{width:min(100%,calc(100% - 18px));padding:16px 0 60px}
+      .hero{border-radius:28px;padding:18px}
+      .hero-copy{grid-template-columns:1fr;gap:20px}
+      .brand-plate{order:-1;justify-self:start;max-width:180px;border-radius:24px}
+      h1{margin-top:14px}
+      .section,.section--primary{padding:18px;border-radius:26px}
+      .split,.split.reverse{gap:14px}
+      .section-image{border-radius:22px}
+      .btn{width:100%}
+      .hero-actions,.section-actions{display:grid;grid-template-columns:1fr}
+      .topbar{position:absolute;top:18px;right:18px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+    }
+  </style>
+</head>
+<body class="page-glow">
+  <div class="progress-wrap" aria-hidden="true"><div class="progress" id="progress"></div></div>
+  <nav class="rail" id="rail" aria-label="Seções"></nav>
+
+  <main class="wrap shell">
+    <header class="hero" id="topo" data-label="Início">
+      <div class="topbar">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Ativar tema escuro" aria-pressed="false">
+          <span class="toggle-track" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="hero-copy">
+        <div>
+          <div class="kicker"><i aria-hidden="true"></i>IA e tecnologia na prática</div>
+          <h1>Tecnologia que a gente <span class="grad">testa antes de indicar</span>.</h1>
+          <p class="lead">A FavCode acompanha o que está em alta em IA e tecnologia, testa ferramentas e compartilha o que realmente funciona.</p>
+          <div class="hero-actions">
+            <a class="btn btn-accent" href="https://radar.favcode.com.br/#em-alta=Anthropic" target="_blank" rel="noopener">Abrir o Radar <span aria-hidden="true">→</span></a>
+            <a class="btn btn-secondary" href="https://www.instagram.com/favcode.br/" target="_blank" rel="noopener">Seguir no Instagram</a>
+          </div>
+        </div>
+
+        <div class="brand-plate">
+          <img src="./favcode-logo.webp" width="720" height="670" alt="FavCode — Testou. Funcionou. Favoritou." fetchpriority="high" />
+        </div>
+      </div>
+    </header>
+
+    <section class="section section--primary reveal" id="radar" data-label="Radar">
+      <div class="flow-label"><span class="n">01</span><span>Radar</span><span class="line" aria-hidden="true"></span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Radar FavCode</div>
+            <h2>Os temas em alta em IA e tecnologia, em um só lugar.</h2>
+            <p class="sub">Acompanhe o que está em evidência no mercado de tecnologia e entenda o cenário em poucos minutos.</p>
+          </div>
+          <div class="meta-row">
+            <span class="meta-chip">Em alta</span>
+            <span class="meta-chip">Inteligência artificial</span>
+            <span class="meta-chip">Tecnologia</span>
+            <span class="meta-chip">Tendências</span>
+          </div>
+          <div class="section-actions">
+            <a class="btn btn-accent" href="https://radar.favcode.com.br/#em-alta=Anthropic" target="_blank" rel="noopener">Acessar o Radar <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <div class="section-image"><img src="./assets/radar.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração do Radar FavCode: globo e painel de temas em alta" /></div>
+      </div>
+    </section>
+
+    <section class="section section--feature reveal" id="instagram" data-label="Instagram">
+      <div class="flow-label"><span class="n">02</span><span>Instagram</span><span class="line" aria-hidden="true"></span></div>
+      <div class="split reverse">
+        <div class="section-image"><img src="./assets/instagram.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração do Instagram FavCode: feed com reels e carrosséis" /></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Instagram @favcode.br</div>
+            <h2>Ferramentas e dicas em formato rápido.</h2>
+            <p class="sub">Reels e carrosséis com ferramentas testadas, dicas práticas e resultados que você pode aplicar no seu dia a dia.</p>
+          </div>
+          <div class="meta-row">
+            <span class="meta-chip">Reels</span>
+            <span class="meta-chip">Carrosséis</span>
+            <span class="meta-chip">Ferramentas</span>
+            <span class="meta-chip">Resultados</span>
+          </div>
+          <div class="section-actions">
+            <a class="btn btn-primary" href="https://www.instagram.com/favcode.br/" target="_blank" rel="noopener">Seguir @favcode.br <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="whatsapp" data-label="WhatsApp">
+      <div class="flow-label"><span class="n">03</span><span>WhatsApp</span><span class="line" aria-hidden="true"></span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">WhatsApp oficial</div>
+            <h2>Fale direto com a FavCode.</h2>
+            <p class="sub">Canal oficial para tirar dúvidas e conversar com a equipe.</p>
+          </div>
+          <div class="section-actions">
+            <a class="btn btn-accent" href="https://wa.me/558788231777" target="_blank" rel="noopener">Conversar no WhatsApp <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <div class="section-image"><img src="./assets/whatsapp.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração de conversa no WhatsApp oficial da FavCode" /></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="newsletter" data-label="Newsletter">
+      <div class="flow-label"><span class="n">04</span><span>Newsletter</span><span class="line" aria-hidden="true"></span><span class="soon">Em breve</span></div>
+      <div class="split reverse">
+        <div class="section-image"><img src="./assets/newsletter.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração da newsletter da FavCode" /></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Newsletter</div>
+            <h2>A curadoria da FavCode no seu e-mail.</h2>
+            <p class="sub">Uma seleção do que testamos, do que funcionou e do que entrou em alta, direto na sua caixa de entrada.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="portfolio" data-label="Portfólio">
+      <div class="flow-label"><span class="n">05</span><span>Portfólio</span><span class="line" aria-hidden="true"></span><span class="soon">Em breve</span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Portfólio</div>
+            <h2>Projetos, produtos e entregas.</h2>
+            <p class="sub">Interfaces, websites e soluções digitais desenvolvidas pela FavCode.</p>
+          </div>
+        </div>
+        <div class="section-image"><img src="./assets/portfolio.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração de projetos do portfólio da FavCode" /></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="curso" data-label="Curso">
+      <div class="flow-label"><span class="n">06</span><span>Curso</span><span class="line" aria-hidden="true"></span><span class="soon">Em breve</span></div>
+      <div class="split reverse">
+        <div class="section-image"><img src="./assets/curso.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração da plataforma de curso da FavCode" /></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Curso</div>
+            <h2>Formação prática e estruturada.</h2>
+            <p class="sub">Módulos organizados em trilha para aprender com método e aplicar de verdade.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="comunidade" data-label="Comunidade">
+      <div class="flow-label"><span class="n">07</span><span>Comunidade</span><span class="line" aria-hidden="true"></span><span class="soon">Em breve</span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Comunidade + aulas grátis</div>
+            <h2>Aprenda junto, com aulas gratuitas.</h2>
+            <p class="sub">Um espaço para trocar experiências, tirar dúvidas e participar de aulas grátis com a FavCode.</p>
+          </div>
+        </div>
+        <div class="section-image"><img src="./assets/comunidade.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração da comunidade da FavCode em uma aula online" /></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="conselheiros" data-label="Conselheiros">
+      <div class="flow-label"><span class="n">08</span><span>Conselheiros</span><span class="line" aria-hidden="true"></span><span class="soon">Em breve</span></div>
+      <div class="split reverse">
+        <div class="section-image"><img src="./assets/conselheiros.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Ilustração dos seis conselheiros da FavCode" /></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">6 Conselheiros</div>
+            <h2>Seis perspectivas para decidir melhor.</h2>
+            <p class="sub">Visões complementares para avaliar ideias, produtos e decisões antes de colocar em prática.</p>
+          </div>
+          <div class="meta-row">
+            <span class="meta-chip">Estratégia</span>
+            <span class="meta-chip">Marketing</span>
+            <span class="meta-chip">Produto</span>
+            <span class="meta-chip">Vendas</span>
+            <span class="meta-chip">Operações</span>
+            <span class="meta-chip">Crítica</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <strong>FavCode</strong> · Testou. Funcionou. Favoritou.
+    </footer>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const metaThemeColor = document.getElementById('metaThemeColor');
+
+    function readTheme(){
+      try { return localStorage.getItem('favcode-theme'); } catch (e) { return null; }
+    }
+    function saveTheme(theme){
+      try { localStorage.setItem('favcode-theme', theme); } catch (e) {}
+    }
+    function applyTheme(theme){
+      html.setAttribute('data-theme', theme);
+      const dark = theme === 'dark';
+      themeToggle.setAttribute('aria-pressed', String(dark));
+      themeToggle.setAttribute('aria-label', dark ? 'Ativar tema claro' : 'Ativar tema escuro');
+      if(metaThemeColor) metaThemeColor.setAttribute('content', dark ? '#0a1022' : '#f4f7ff');
+    }
+
+    // O tema inicial já foi definido no <head>; aqui só sincroniza o botão.
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+    themeToggle.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      saveTheme(next);
+    });
+
+    // Sem escolha manual salva, acompanha a mudança de tema do sistema.
+    const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkQuery.addEventListener?.('change', (e) => {
+      if(!readTheme()) applyTheme(e.matches ? 'dark' : 'light');
+    });
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealEls = [...document.querySelectorAll('.reveal')];
+    if(!prefersReduced && 'IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(entry.isIntersecting){
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        })
+      }, { threshold: .08 });
+      revealEls.forEach((el) => io.observe(el));
+    } else {
+      revealEls.forEach((el) => el.classList.add('in'));
+    }
+
+    const sections = [...document.querySelectorAll('[data-label]')];
+    const rail = document.getElementById('rail');
+    sections.forEach((section) => {
+      const a = document.createElement('a');
+      a.href = '#' + section.id;
+      a.setAttribute('aria-label', section.dataset.label);
+      a.innerHTML = '<span aria-hidden="true">' + section.dataset.label + '</span>';
+      rail.appendChild(a);
+    });
+    const railLinks = [...rail.querySelectorAll('a')];
+    if('IntersectionObserver' in window){
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(entry.isIntersecting){
+            railLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id));
+          }
+        });
+      }, { rootMargin: '-42% 0px -42% 0px', threshold: 0 });
+      sections.forEach((section) => sectionObserver.observe(section));
+    }
+
+    const progress = document.getElementById('progress');
+    function updateProgress(){
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+    }
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+  </script>
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="FavCode — BioSite protótipo com Radar, Instagram, WhatsApp, Newsletter, Portfólio, Curso, Comunidade e Conselheiros." />
+  <title>FavCode — BioSite</title>
+  <style>
+    :root{
+      --bg:#f4f7ff;
+      --bg-soft:#edf3ff;
+      --card:rgba(255,255,255,.95);
+      --card-2:#f7f9ff;
+      --text:#10152d;
+      --title:#0e1530;
+      --muted:#66728f;
+      --line:#dfe6f4;
+      --blue:#1768ff;
+      --cyan:#08c9e8;
+      --shadow:0 22px 60px rgba(17,29,77,.10);
+      --hero-grad:linear-gradient(180deg,#eef4ff 0%,#f9fbff 35%,#f4f7ff 100%);
+      --image-shadow:0 28px 60px rgba(21,38,99,.14);
+      --success:#29c98b;
+    }
+
+    html[data-theme="dark"]{
+      --bg:#0a1022;
+      --bg-soft:#111932;
+      --card:rgba(15,23,46,.94);
+      --card-2:#0f1937;
+      --text:#eef3ff;
+      --title:#ffffff;
+      --muted:#a8b4d1;
+      --line:#223157;
+      --blue:#4a88ff;
+      --cyan:#39d9f3;
+      --shadow:0 24px 64px rgba(0,0,0,.34);
+      --hero-grad:linear-gradient(180deg,#0d1430 0%,#0a1022 40%,#0a1022 100%);
+      --image-shadow:0 26px 60px rgba(0,0,0,.35);
+      --success:#44e5a4;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:24px}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--hero-grad);
+      color:var(--text);
+      overflow-x:hidden;
+      transition:background .3s ease,color .3s ease;
+    }
+    a{text-decoration:none;color:inherit}
+    button,input{font:inherit}
+    img{max-width:100%;display:block}
+
+    .page-glow:before,.page-glow:after{content:"";position:fixed;pointer-events:none;z-index:-1;filter:blur(40px);opacity:.65}
+    .page-glow:before{width:340px;height:340px;left:-90px;top:120px;background:radial-gradient(circle,rgba(23,104,255,.17),transparent 70%)}
+    .page-glow:after{width:320px;height:320px;right:-80px;top:0;background:radial-gradient(circle,rgba(8,201,232,.14),transparent 72%)}
+
+    .progress-wrap{position:fixed;top:0;left:0;right:0;height:4px;background:transparent;z-index:60}
+    .progress{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 18px rgba(23,104,255,.45)}
+
+    .wrap{width:min(1120px,calc(100% - 28px));margin:auto;padding:22px 0 80px}
+    .shell{display:grid;gap:18px}
+
+    .hero,.section,.quick-card,.spot-card,.mini-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      transition:background .3s ease,border-color .3s ease,color .3s ease,transform .25s ease,box-shadow .25s ease;
+    }
+
+    .hero{
+      border-radius:40px;
+      overflow:hidden;
+      position:relative;
+      padding:24px;
+      display:grid;
+      gap:20px;
+      isolation:isolate;
+    }
+    .hero:before{content:"";position:absolute;width:430px;height:430px;right:-110px;top:-150px;background:radial-gradient(circle,rgba(23,104,255,.22),transparent 65%);z-index:-1}
+    .hero:after{content:"";position:absolute;width:260px;height:260px;left:-90px;bottom:-120px;background:radial-gradient(circle,rgba(8,201,232,.16),transparent 68%);z-index:-1}
+
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;position:relative;z-index:2}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .brand img{width:54px;height:54px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    .brand-text strong{display:block;font-size:20px;letter-spacing:-.02em;color:var(--title)}
+    .brand-text span{display:block;font-size:12px;color:var(--muted)}
+    .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .status-pill,.ghost-pill,.theme-toggle{border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.55);padding:10px 14px;color:var(--text);backdrop-filter:blur(10px)}
+    html[data-theme="dark"] .status-pill,html[data-theme="dark"] .ghost-pill,html[data-theme="dark"] .theme-toggle{background:rgba(255,255,255,.04)}
+    .status-pill{font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:8px}
+    .status-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 0 6px rgba(41,201,139,.12)}
+    .ghost-pill{font-size:12px;font-weight:700;color:var(--muted)}
+    .theme-toggle{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:800;cursor:pointer;user-select:none}
+    .theme-toggle .toggle-track{width:42px;height:24px;border-radius:999px;background:var(--bg-soft);border:1px solid var(--line);position:relative;display:block}
+    .theme-toggle .toggle-track:after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));transition:transform .28s ease;box-shadow:0 6px 12px rgba(23,104,255,.28)}
+    html[data-theme="dark"] .theme-toggle .toggle-track:after{transform:translateX(18px)}
+    .theme-toggle small{color:var(--muted);font-size:11px;font-weight:700}
+
+    .hero-copy{display:grid;grid-template-columns:1.08fr .92fr;gap:18px;align-items:center}
+    .kicker{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+    .kicker i{width:36px;height:1px;background:linear-gradient(90deg,var(--blue),transparent);display:block}
+    h1{font-size:clamp(44px,7vw,72px);line-height:.93;letter-spacing:-.07em;margin:18px 0 18px;color:var(--title)}
+    .grad{background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:17px;line-height:1.72;color:var(--muted);max-width:640px;margin:0}
+    .hero-actions,.section-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:15px;border:1px solid transparent;font-size:14px;font-weight:800;transition:transform .2s ease,box-shadow .22s ease,background .22s ease,border-color .22s ease}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:#0f1838;color:#fff;box-shadow:0 12px 28px rgba(15,24,56,.16)}
+    .btn-secondary{background:var(--card);color:var(--text);border-color:var(--line)}
+    .btn-accent{background:linear-gradient(90deg,var(--blue),var(--cyan));color:#fff;box-shadow:0 16px 32px rgba(23,104,255,.22)}
+
+    .hero-info{display:grid;gap:12px}
+    .hero-panel{background:linear-gradient(145deg,rgba(23,104,255,.07),rgba(8,201,232,.08));border:1px solid var(--line);border-radius:24px;padding:18px;position:relative;overflow:hidden}
+    html[data-theme="dark"] .hero-panel{background:linear-gradient(145deg,rgba(74,136,255,.11),rgba(57,217,243,.08))}
+    .hero-panel h3{margin:0 0 8px;font-size:18px;letter-spacing:-.03em;color:var(--title)}
+    .hero-panel p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+    .panel-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .tag{display:inline-flex;align-items:center;gap:7px;padding:9px 11px;border-radius:999px;font-size:11px;font-weight:800;background:rgba(255,255,255,.58);border:1px solid var(--line);color:var(--text)}
+    html[data-theme="dark"] .tag{background:rgba(255,255,255,.04)}
+    .hero-image{border-radius:30px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--image-shadow)}
+    .hero-image img{width:100%;aspect-ratio:16/9;object-fit:cover}
+
+    .hero-bottom{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .mini-card{border-radius:18px;padding:16px;background:var(--card-2)}
+    .mini-card b{display:block;font-size:18px;color:var(--title);margin-bottom:5px}
+    .mini-card span{font-size:12px;color:var(--muted);line-height:1.45}
+
+    .feature-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .quick-card{border-radius:24px;padding:18px;display:flex;gap:14px;align-items:flex-start;position:relative;overflow:hidden}
+    .quick-card:hover{transform:translateY(-4px)}
+    .quick-card .icon{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;display:grid;place-items:center;font-size:20px;font-weight:900;flex:0 0 46px}
+    .quick-card b{display:block;margin-bottom:6px;font-size:16px;color:var(--title)}
+    .quick-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+
+    .spotlight{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .spot-card{border-radius:30px;padding:18px;overflow:hidden;position:relative;display:grid;gap:14px}
+    .spot-card--primary{background:linear-gradient(145deg,rgba(23,104,255,.08),rgba(8,201,232,.08)),var(--card)}
+    .spot-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);background:rgba(255,255,255,.5)}
+    html[data-theme="dark"] .badge{background:rgba(255,255,255,.05)}
+    .badge--live{color:var(--success)}
+    .badge--social{color:#fe4f86}
+    .spot-card h2,.section h2{font-size:30px;line-height:1.03;letter-spacing:-.05em;margin:0;color:var(--title)}
+    .spot-card p,.sub{margin:0;color:var(--muted);font-size:14px;line-height:1.65}
+    .spot-image,.section-image{border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--image-shadow)}
+    .spot-image img,.section-image img{width:100%;aspect-ratio:4/3;object-fit:cover}
+
+    .section{border-radius:34px;padding:24px;position:relative;overflow:hidden;scroll-margin-top:20px}
+    .section.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.75,.2,1)}
+    .section.reveal.in{opacity:1;transform:none}
+    .flow-label{display:flex;align-items:center;gap:10px;margin-bottom:15px;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .flow-label .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(23,104,255,.08);color:var(--blue);border:1px solid var(--line)}
+    .flow-label .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+    .eyebrow{font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+    .sub{margin-bottom:18px;max-width:760px;line-height:1.7}
+    .split{display:grid;grid-template-columns:.98fr 1.02fr;gap:18px;align-items:center}
+    .split.reverse{grid-template-columns:1.02fr .98fr}
+    .copy-stack{display:grid;gap:14px}
+    .copy-stack ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+    .copy-stack li{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:13px;line-height:1.6}
+    .copy-stack li i{width:22px;height:22px;border-radius:50%;flex:0 0 22px;display:grid;place-items:center;font-style:normal;font-weight:900;background:rgba(23,104,255,.09);color:var(--blue);font-size:11px}
+    .meta-row{display:flex;flex-wrap:wrap;gap:8px}
+    .meta-chip{padding:9px 11px;border-radius:999px;border:1px solid var(--line);font-size:11px;font-weight:800;background:rgba(255,255,255,.5);color:var(--text)}
+    html[data-theme="dark"] .meta-chip{background:rgba(255,255,255,.04)}
+
+    .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+    .news-item{padding:16px;border-radius:18px;background:var(--card-2);border:1px solid var(--line)}
+    .news-item .news-meta{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--muted);margin-bottom:8px}
+    .news-item b{display:block;font-size:13px;line-height:1.45;color:var(--title)}
+
+    .tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+    .tool-card{background:var(--card-2);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;gap:14px;align-items:flex-start}
+    .tool-card .icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#eef3ff,#e8fbff);display:grid;place-items:center;font-size:20px;flex:0 0 48px;color:var(--blue);font-weight:900}
+    html[data-theme="dark"] .tool-card .icon{background:linear-gradient(135deg,rgba(74,136,255,.18),rgba(57,217,243,.14))}
+    .tool-card b{display:block;font-size:15px;color:var(--title);margin-bottom:5px}
+    .tool-card span{display:block;font-size:12px;color:var(--muted);line-height:1.45}
+
+    .newsletter-form{display:flex;gap:10px;flex-wrap:wrap}
+    .newsletter-form input{min-width:0;flex:1;padding:14px 15px;border-radius:15px;border:1px solid var(--line);background:var(--bg);color:var(--text);outline:none}
+    .newsletter-form input::placeholder{color:var(--muted)}
+
+    .footer{padding:20px 6px 0;text-align:center;color:var(--muted);font-size:12px;line-height:1.7}
+    .footer strong{color:var(--title)}
+
+    .rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:9px;align-items:center}
+    .rail a{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb, var(--muted) 30%, transparent);border:1px solid color-mix(in srgb, var(--muted) 20%, transparent);position:relative;transition:.2s}
+    .rail a span{position:absolute;right:18px;top:50%;transform:translateY(-50%);white-space:nowrap;background:var(--card);border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:10px;font-weight:800;color:var(--text);opacity:0;pointer-events:none;transition:.2s}
+    .rail a:hover span,.rail a.active span{opacity:1}
+    .rail a.active{background:var(--blue);border-color:var(--blue);transform:scale(1.25)}
+
+    @media (max-width: 1080px){
+      .wrap{width:min(960px,calc(100% - 24px))}
+      .hero-copy,.split,.split.reverse,.spotlight{grid-template-columns:1fr}
+      .hero-bottom{grid-template-columns:repeat(2,1fr)}
+      .feature-strip,.tools-grid,.news-grid{grid-template-columns:repeat(2,1fr)}
+      .rail{display:none}
+    }
+    @media (max-width: 720px){
+      .wrap{width:min(100%,calc(100% - 18px));padding:16px 0 60px}
+      .hero{border-radius:28px;padding:18px}
+      .topbar,.top-actions{align-items:flex-start}
+      .topbar{flex-direction:column}
+      .hero-bottom,.feature-strip,.tools-grid,.news-grid,.spotlight{grid-template-columns:1fr}
+      .section{padding:18px;border-radius:26px}
+      .split,.split.reverse{grid-template-columns:1fr;gap:14px}
+      .quick-card,.spot-card{border-radius:20px}
+      .section-image,.hero-image{border-radius:22px}
+      .btn{width:100%}
+      .hero-actions,.section-actions,.newsletter-form{display:grid;grid-template-columns:1fr}
+      .top-actions{width:100%}
+      .theme-toggle,.status-pill,.ghost-pill{width:100%;justify-content:center}
+      .hero-bottom{grid-template-columns:1fr 1fr}
+    }
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+    }
+  </style>
+</head>
+<body class="page-glow">
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+  <nav class="rail" id="rail" aria-label="Seções"></nav>
+
+  <main class="wrap shell">
+    <section class="hero" id="topo" data-label="Início">
+      <div class="topbar">
+        <a class="brand" href="#topo" aria-label="FavCode início">
+          <img src="./favcode-logo.png" alt="Logo da FavCode" />
+          <div class="brand-text">
+            <strong>FavCode</strong>
+            <span>Testou. Funcionou. Favoritou.</span>
+          </div>
+        </a>
+        <div class="top-actions">
+          <div class="status-pill"><span class="dot"></span> Protótipo com Radar, Instagram e WhatsApp</div>
+          <div class="ghost-pill">BioSite vertical</div>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+            <span class="toggle-track" aria-hidden="true"></span>
+            <span>Tema <small id="themeLabel">claro</small></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <div>
+          <div class="kicker"><i></i>Protótipo visual</div>
+          <h1>FavCode em um <span class="grad">BioSite visual, simples e objetivo</span>.</h1>
+          <p class="lead">Este protótipo reúne as principais frentes da FavCode em uma única página: <strong>Radar</strong>, <strong>Instagram</strong>, <strong>WhatsApp</strong>, <strong>Newsletter</strong>, <strong>Portfólio</strong>, <strong>Curso</strong>, <strong>Comunidade</strong> e <strong>Conselheiros</strong>. As imagens são ilustrativas e temporárias, pensadas para combinar com o contexto de cada seção.</p>
+          <div class="hero-actions">
+            <a class="btn btn-accent" href="https://radar.favcode.com.br/#em-alta=Anthropic" target="_blank" rel="noopener">Abrir Radar →</a>
+            <a class="btn btn-primary" href="https://www.instagram.com/favcode.br?stkn=MmExbHFvZTVhd2E5" target="_blank" rel="noopener">Abrir Instagram →</a>
+            <a class="btn btn-secondary" href="https://wa.me/558788231777" target="_blank" rel="noopener">Abrir WhatsApp →</a>
+          </div>
+        </div>
+
+        <div class="hero-info">
+          <div class="hero-panel">
+            <h3>Destaques atuais</h3>
+            <p>Radar e Instagram aparecem com maior destaque visual. O WhatsApp entra como contato direto da empresa. As demais áreas permanecem no protótipo para compor o ecossistema da FavCode.</p>
+            <div class="panel-tags">
+              <span class="tag">Tema claro/escuro</span>
+              <span class="tag">Imagens temporárias</span>
+              <span class="tag">Interações sutis</span>
+              <span class="tag">Links reais</span>
+            </div>
+          </div>
+          <div class="hero-image">
+            <img src="./assets/radar.png" alt="Ilustração do Radar FavCode" />
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-bottom">
+        <div class="mini-card"><b>Radar</b><span>Notícias e sinais em tempo real.</span></div>
+        <div class="mini-card"><b>Instagram</b><span>Conteúdo curto, visual e aplicável.</span></div>
+        <div class="mini-card"><b>WhatsApp</b><span>Canal oficial para contato rápido.</span></div>
+        <div class="mini-card"><b>Protótipo</b><span>Base pronta para receber conteúdo definitivo.</span></div>
+      </div>
+    </section>
+
+    <section class="feature-strip reveal" id="atalhos" data-label="Atalhos">
+      <a class="quick-card" href="https://radar.favcode.com.br/#em-alta=Anthropic" target="_blank" rel="noopener">
+        <div class="icon">◉</div>
+        <div><b>Radar</b><p>Atualização constante com visual de feed e monitoramento.</p></div>
+      </a>
+      <a class="quick-card" href="https://www.instagram.com/favcode.br?stkn=MmExbHFvZTVhd2E5" target="_blank" rel="noopener">
+        <div class="icon">◎</div>
+        <div><b>Instagram</b><p>Conteúdo visual com dicas, ferramentas e resultados.</p></div>
+      </a>
+      <a class="quick-card" href="https://wa.me/558788231777" target="_blank" rel="noopener">
+        <div class="icon">✆</div>
+        <div><b>WhatsApp oficial</b><p>Canal direto para atendimento e comunicação.</p></div>
+      </a>
+    </section>
+
+    <section class="spotlight reveal" id="destaques" data-label="Destaques">
+      <article class="spot-card spot-card--primary">
+        <div class="spot-card-top">
+          <span class="badge badge--live">● Radar</span>
+          <span class="ghost-pill">Destaque</span>
+        </div>
+        <div>
+          <h2>Radar FavCode</h2>
+          <p>Seção visual para representar notícias em alta, monitoramento de temas e leitura dinâmica.</p>
+        </div>
+        <div class="section-actions">
+          <a class="btn btn-accent" href="https://radar.favcode.com.br/#em-alta=Anthropic" target="_blank" rel="noopener">Abrir Radar →</a>
+          <a class="btn btn-secondary" href="#radar">Ver seção</a>
+        </div>
+        <div class="spot-image"><img src="./assets/radar.png" alt="Visual do Radar FavCode" /></div>
+      </article>
+
+      <article class="spot-card" >
+        <div class="spot-card-top">
+          <span class="badge badge--social">◌ Instagram</span>
+          <span class="ghost-pill">Destaque</span>
+        </div>
+        <div>
+          <h2>Instagram FavCode</h2>
+          <p>Seção visual para representar conteúdo rápido, carrosséis, reels e materiais de aplicação prática.</p>
+        </div>
+        <div class="section-actions">
+          <a class="btn btn-primary" href="https://www.instagram.com/favcode.br?stkn=MmExbHFvZTVhd2E5" target="_blank" rel="noopener">Abrir Instagram →</a>
+          <a class="btn btn-secondary" href="#instagram">Ver seção</a>
+        </div>
+        <div class="spot-image"><img src="./assets/instagram.png" alt="Visual do Instagram FavCode" /></div>
+      </article>
+    </section>
+
+    <section class="section reveal" id="radar" data-label="Radar">
+      <div class="flow-label"><span class="n">01</span><span>Radar</span><span class="line"></span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Radar FavCode</div>
+            <h2>Notícias, sinais e temas em alta.</h2>
+            <p class="sub">Bloco ilustrativo para o Radar da FavCode. O objetivo visual é comunicar atualização, leitura rápida e acompanhamento de assuntos relevantes.</p>
+          </div>
+          <div class="meta-row">
+            <span class="meta-chip">Ao vivo</span>
+            <span class="meta-chip">Tendências</span>
+            <span class="meta-chip">Sinais</span>
+            <span class="meta-chip">Global</span>
+          </div>
+          <ul>
+            <li><i>•</i><span>Ilustração com globo, cartões e feed para reforçar a ideia de monitoramento.</span></li>
+            <li><i>•</i><span>Área ideal para conectar dados reais futuramente.</span></li>
+          </ul>
+          <div class="section-actions">
+            <a class="btn btn-accent" href="https://radar.favcode.com.br/#em-alta=Anthropic" target="_blank" rel="noopener">Acessar Radar →</a>
+          </div>
+        </div>
+        <div>
+          <div class="section-image"><img src="./assets/radar.png" alt="Mockup ilustrativo do Radar da FavCode" /></div>
+          <div class="news-grid" id="newsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="instagram" data-label="Instagram">
+      <div class="flow-label"><span class="n">02</span><span>Instagram</span><span class="line"></span></div>
+      <div class="split reverse">
+        <div><div class="section-image"><img src="./assets/instagram.png" alt="Mockup ilustrativo do Instagram FavCode" /></div></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Instagram FavCode</div>
+            <h2>Conteúdo curto, visual e aplicável.</h2>
+            <p class="sub">Bloco ilustrativo para o Instagram da FavCode. O visual foi pensado para representar reels, carrosséis, dicas práticas e conteúdos com foco em resultado.</p>
+          </div>
+          <div class="meta-row">
+            <span class="meta-chip">Reels</span>
+            <span class="meta-chip">Carrosséis</span>
+            <span class="meta-chip">Ferramentas</span>
+            <span class="meta-chip">Resultados</span>
+          </div>
+          <ul>
+            <li><i>•</i><span>Ilustração com feed mobile, peças curtas e sinais de engajamento.</span></li>
+            <li><i>•</i><span>Boa área para destacar posts, sequências e coleções no futuro.</span></li>
+          </ul>
+          <div class="section-actions">
+            <a class="btn btn-primary" href="https://www.instagram.com/favcode.br?stkn=MmExbHFvZTVhd2E5" target="_blank" rel="noopener">Acessar Instagram →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="whatsapp" data-label="WhatsApp">
+      <div class="flow-label"><span class="n">03</span><span>WhatsApp</span><span class="line"></span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">WhatsApp oficial</div>
+            <h2>Contato rápido com a FavCode.</h2>
+            <p class="sub">Bloco ilustrativo para o canal oficial no WhatsApp. O foco é reforçar atendimento, comunicação e praticidade.</p>
+          </div>
+          <div class="meta-row">
+            <span class="meta-chip">Canal oficial</span>
+            <span class="meta-chip">Atendimento</span>
+            <span class="meta-chip">Equipe</span>
+          </div>
+          <ul>
+            <li><i>•</i><span>Ilustração com interface de conversa para reforçar proximidade e suporte.</span></li>
+            <li><i>•</i><span>O verde diferencia visualmente esta seção das demais.</span></li>
+          </ul>
+          <div class="section-actions">
+            <a class="btn btn-accent" href="https://wa.me/558788231777" target="_blank" rel="noopener">Acessar WhatsApp →</a>
+          </div>
+        </div>
+        <div><div class="section-image"><img src="./assets/whatsapp.png" alt="Mockup ilustrativo do WhatsApp oficial da FavCode" /></div></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="newsletter" data-label="Newsletter">
+      <div class="flow-label"><span class="n">04</span><span>Newsletter</span><span class="line"></span></div>
+      <div class="split reverse">
+        <div><div class="section-image"><img src="./assets/newsletter.png" alt="Mockup ilustrativo da newsletter da FavCode" /></div></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Newsletter</div>
+            <h2>Curadoria em formato de e-mail.</h2>
+            <p class="sub">Bloco ilustrativo para representar uma newsletter com foco em seleção de insights, temas e atualizações relevantes.</p>
+          </div>
+          <form class="newsletter-form" id="newsletterForm">
+            <input id="email" type="email" placeholder="Digite seu melhor e-mail" required />
+            <button class="btn btn-primary" type="submit">Quero receber</button>
+          </form>
+          <div id="formMsg" style="font-size:12px;color:var(--muted);min-height:18px" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="portfolio" data-label="Portfólio">
+      <div class="flow-label"><span class="n">05</span><span>Portfólio</span><span class="line"></span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Portfólio</div>
+            <h2>Projetos, produtos e entregas.</h2>
+            <p class="sub">Bloco ilustrativo para o portfólio da FavCode. O visual representa interfaces, branding, websites e soluções digitais.</p>
+          </div>
+          <ul>
+            <li><i>•</i><span>Boa área para apresentar cases reais futuramente.</span></li>
+            <li><i>•</i><span>A imagem reforça variedade de projetos e impacto visual.</span></li>
+          </ul>
+        </div>
+        <div><div class="section-image"><img src="./assets/portfolio.png" alt="Mockup ilustrativo do portfólio FavCode" /></div></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="curso" data-label="Curso">
+      <div class="flow-label"><span class="n">06</span><span>Curso</span><span class="line"></span></div>
+      <div class="split reverse">
+        <div><div class="section-image"><img src="./assets/curso.png" alt="Mockup ilustrativo do curso FavCode" /></div></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Curso</div>
+            <h2>Formação prática e estruturada.</h2>
+            <p class="sub">Bloco ilustrativo para representar uma plataforma de curso com módulos, trilha de aprendizado e progressão visual.</p>
+          </div>
+          <ul>
+            <li><i>•</i><span>A ilustração reforça método, organização e evolução.</span></li>
+            <li><i>•</i><span>Espaço ideal para receber páginas ou ofertas futuras.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="comunidade" data-label="Comunidade">
+      <div class="flow-label"><span class="n">07</span><span>Comunidade</span><span class="line"></span></div>
+      <div class="split">
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">Comunidade + aulas grátis</div>
+            <h2>Interação, troca e aprendizado conjunto.</h2>
+            <p class="sub">Bloco ilustrativo para a comunidade da FavCode, com referência visual a aulas, conversas e participação de membros.</p>
+          </div>
+          <ul>
+            <li><i>•</i><span>Boa seção para centralizar acesso a comunidade e materiais gratuitos.</span></li>
+            <li><i>•</i><span>O visual reforça conexão, colaboração e continuidade.</span></li>
+          </ul>
+        </div>
+        <div><div class="section-image"><img src="./assets/comunidade.png" alt="Mockup ilustrativo da comunidade FavCode" /></div></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="conselheiros" data-label="Conselheiros">
+      <div class="flow-label"><span class="n">08</span><span>Conselheiros</span><span class="line"></span></div>
+      <div class="split reverse">
+        <div><div class="section-image"><img src="./assets/conselheiros.png" alt="Mockup ilustrativo dos seis conselheiros da FavCode" /></div></div>
+        <div class="copy-stack">
+          <div>
+            <div class="eyebrow">6 Conselheiros</div>
+            <h2>Seis perspectivas em um só bloco.</h2>
+            <p class="sub">Bloco ilustrativo para representar os conselheiros da FavCode nas áreas de estratégia, marketing, produto, vendas, operações e crítica.</p>
+          </div>
+          <div class="meta-row">
+            <span class="meta-chip">Estratégia</span>
+            <span class="meta-chip">Marketing</span>
+            <span class="meta-chip">Produto</span>
+            <span class="meta-chip">Vendas</span>
+            <span class="meta-chip">Operações</span>
+            <span class="meta-chip">Crítica</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="abas" data-label="Resumo">
+      <div class="flow-label"><span class="n">09</span><span>Resumo</span><span class="line"></span></div>
+      <div class="eyebrow">Abas do protótipo</div>
+      <h2>Estrutura atual do BioSite</h2>
+      <p class="sub">Cada bloco abaixo representa uma aba/área do protótipo com sua imagem ilustrativa correspondente.</p>
+      <div class="tools-grid">
+        <div class="tool-card"><div class="icon">R</div><div><b>Radar</b><span>Monitoramento e notícias.</span></div></div>
+        <div class="tool-card"><div class="icon">I</div><div><b>Instagram</b><span>Conteúdo rápido e visual.</span></div></div>
+        <div class="tool-card"><div class="icon">W</div><div><b>WhatsApp</b><span>Contato oficial.</span></div></div>
+        <div class="tool-card"><div class="icon">N</div><div><b>Newsletter</b><span>Curadoria por e-mail.</span></div></div>
+        <div class="tool-card"><div class="icon">P</div><div><b>Portfólio</b><span>Projetos e entregas.</span></div></div>
+        <div class="tool-card"><div class="icon">C</div><div><b>Curso</b><span>Formação estruturada.</span></div></div>
+        <div class="tool-card"><div class="icon">G</div><div><b>Comunidade</b><span>Troca e participação.</span></div></div>
+        <div class="tool-card"><div class="icon">6</div><div><b>Conselheiros</b><span>Seis perspectivas estratégicas.</span></div></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <strong>FavCode</strong> · Testou. Funcionou. Favoritou.<br />
+      BioSite protótipo com imagens ilustrativas temporárias e links reais para Radar, Instagram e WhatsApp.
+    </footer>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+
+    function applyTheme(theme){
+      html.setAttribute('data-theme', theme);
+      themeLabel.textContent = theme === 'dark' ? 'escuro' : 'claro';
+      localStorage.setItem('favcode-theme', theme);
+    }
+
+    const savedTheme = localStorage.getItem('favcode-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+    themeToggle.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+    });
+
+    const items = [
+      ['Radar', 'OpenAI aparece entre os temas observados no painel.'],
+      ['Business', 'Mercados seguem reagindo a movimentos recentes.'],
+      ['Innovation', 'Energia e tecnologia seguem entre os tópicos do momento.'],
+      ['World', 'Assuntos globais mantêm espaço no acompanhamento.'],
+      ['Tech', 'Novas ferramentas e produtos entram na observação contínua.'],
+      ['Signals', 'Menções e tendências ajudam na leitura do cenário.']
+    ];
+
+    function renderNews(){
+      const now = new Date();
+      const list = document.getElementById('newsList');
+      if(!list) return;
+      list.innerHTML = items.map((n, i) => `
+        <div class="news-item">
+          <div class="news-meta"><span>${n[0]}</span><span>${new Date(now.getTime() - i * 60000).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span></div>
+          <b>${n[1]}</b>
+        </div>
+      `).join('');
+    }
+    renderNews();
+    setInterval(renderNews, 30000);
+
+    const newsletterForm = document.getElementById('newsletterForm');
+    const formMsg = document.getElementById('formMsg');
+    if(newsletterForm){
+      newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        formMsg.textContent = 'Cadastro demonstrativo. Conecte aqui sua ferramenta de e-mail marketing.';
+        newsletterForm.reset();
+      });
+    }
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealEls = [...document.querySelectorAll('.reveal')];
+    if(!prefersReduced && 'IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(entry.isIntersecting){
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        })
+      }, { threshold: .14 });
+      revealEls.forEach((el) => io.observe(el));
+    } else {
+      revealEls.forEach((el) => el.classList.add('in'));
+    }
+
+    const sections = [...document.querySelectorAll('[data-label]')];
+    const rail = document.getElementById('rail');
+    sections.forEach((section) => {
+      const a = document.createElement('a');
+      a.href = '#' + section.id;
+      a.setAttribute('aria-label', section.dataset.label);
+      a.innerHTML = '<span>' + section.dataset.label + '</span>';
+      rail.appendChild(a);
+    });
+    const railLinks = [...rail.querySelectorAll('a')];
+    if('IntersectionObserver' in window){
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if(entry.isIntersecting){
+            railLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id));
+          }
+        });
+      }, { rootMargin: '-42% 0px -42% 0px', threshold: 0 });
+      sections.forEach((section) => sectionObserver.observe(section));
+    }
+
+    const progress = document.getElementById('progress');
+    function updateProgress(){
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+    }
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+  </script>
+</body>
+</html>
